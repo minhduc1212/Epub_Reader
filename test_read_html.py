@@ -1,31 +1,22 @@
-from PyQt5 import QtWidgets, QtWebEngineWidgets
-from ebooklib import epub
-import sys
-import ebooklib
+import tkinter as tk
+from tkinter import scrolledtext
 
-class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, html_content):
-        super().__init__()
-
-        self.browser = QtWebEngineWidgets.QWebEngineView()
-        self.setCentralWidget(self.browser)
-
-        self.browser.setHtml(html_content)
-
-def open_epub(filepath):
-    book = epub.read_epub(filepath)
-    html_content = ""
-    for item in book.get_items():
-        if item.get_type() == ebooklib.ITEM_DOCUMENT:
-            html_content += item.get_content().decode('utf-8')
+def load_html_file(file_path):
+    with open(file_path, "r", encoding="utf-8") as file:
+        html_content = file.read()
     return html_content
 
-app = QtWidgets.QApplication(sys.argv)
+def display_html_content(html_content):
+    root = tk.Tk()
+    root.title("HTML Viewer")
 
-filepath = 'Hứa Tiên Chí.epub'  # replace with your epub file path
-html_content = open_epub(filepath)
+    text = scrolledtext.ScrolledText(root, width=100, height=30, wrap=tk.WORD)
+    text.insert(tk.INSERT, html_content)
+    text.pack(expand=True, fill=tk.BOTH)
 
-window = MainWindow(html_content)
-window.show()
+    root.mainloop()
 
-app.exec_()
+if __name__ == "__main__":
+    file_path = "test.html"
+    html_content = load_html_file(file_path)
+    display_html_content(html_content)
