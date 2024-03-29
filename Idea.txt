@@ -1,0 +1,2 @@
+29/3/2024: đổi xhtml sang html để hiển thị được cover
+            => dùng qtextbrowser
