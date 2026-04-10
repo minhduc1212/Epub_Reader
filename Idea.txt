@@ -1,2 +1,9 @@
 29/3/2024: đổi xhtml sang html để hiển thị được cover
             => dùng qtextbrowser
+
+chia epub thành các chươngtheo mục lục, mỗi lần load thì chỉ load 1 chương để giảm dung lượng bộ nhớ
+có 3 cách để sang chương khác: dùng mũi tên hoặc click vào mục lục
+mục lục sẽ được hiển thị ở một tab riêng, khi click vào mục lục sẽ chuyển sang tab nội dung và hiển thị chương tương ứng
+cách khác là cuọn hết chương ấy để sang chương khác
+với các cover, hoặc với chương có nội dung ít thì vì quá nhỏ -> vẫn cho thanh cuộn, khi cuộn thì vẫn sang chương mới
+vẫn phải giữ nguyên độ phân giải, kích cỡ của ảnh, cover cũ
