@@ -8,8 +8,8 @@ A QTextBrowser subclass that:
 """
 
 from PyQt5.QtWidgets import QTextBrowser, QWidget
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QWheelEvent
+from PyQt5.QtCore import pyqtSignal, QUrl
+from PyQt5.QtGui import QWheelEvent, QDesktopServices
 from typing import Optional
 import time
 
@@ -17,10 +17,13 @@ import time
 class ContentView(QTextBrowser):
     next_chapter_requested = pyqtSignal()
     prev_chapter_requested = pyqtSignal()
+    link_requested = pyqtSignal(str)
 
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
-        self.setOpenExternalLinks(True)
+        self.setOpenExternalLinks(False)
+        self.setOpenLinks(False)
+        self.anchorClicked.connect(self.handle_link_click)
         self.setStyleSheet("background-color: transparent; border: none;")
 
         # Các biến trạng thái để theo dõi vị trí cuộn chuột
@@ -34,6 +37,12 @@ class ContentView(QTextBrowser):
         vbar = self.verticalScrollBar()
         if vbar:
             vbar.valueChanged.connect(self.check_scroll_position)
+
+    def handle_link_click(self, url: QUrl):
+        if url.scheme() in ("http", "https"):
+            QDesktopServices.openUrl(url)
+        else:
+            self.link_requested.emit(url.toString())
 
     def load_chapter_html(self, html: str):
         """Nạp nội dung HTML."""

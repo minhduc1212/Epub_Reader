@@ -122,7 +122,7 @@ class EPUBParser:
     def _href_to_spine(self, href: str):
         """Return (spine_index, fragment) for a TOC href."""
         if not href:
-            return 0, None
+            return -1, None
         parts = href.split("#", 1)
         base = parts[0]
         frag = parts[1] if len(parts) > 1 else None
@@ -138,7 +138,7 @@ class EPUBParser:
             # Match on filename only (some EPUBs use relative paths in TOC)
             if posixpath.basename(name) == posixpath.basename(base_href):
                 return i
-        return 0
+        return -1
 
     @property
     def toc_entries(self) -> List[TOCEntry]:

@@ -16,8 +16,8 @@ def main():
     QApplication.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps, True)
 
     app = QApplication(sys.argv)
-    app.setApplicationName("Lumi Reader")
-    app.setOrganizationName("LumiReader")
+    app.setApplicationName("NightReader")
+    app.setOrganizationName("NightReader")
 
     # Global font
     font = QFont("Segoe UI", 10)

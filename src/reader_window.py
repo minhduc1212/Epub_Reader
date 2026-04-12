@@ -102,7 +102,7 @@ class ReaderWindow(QMainWindow):
     # ------------------------------------------------------------------ #
 
     def _setup_ui(self):
-        self.setWindowTitle("Lumi Reader")
+        self.setWindowTitle("Night Reader")
         self.setMinimumSize(820, 580)
         self.resize(1120, 780)
 
@@ -151,6 +151,7 @@ class ReaderWindow(QMainWindow):
         self._content_view = ContentView()
         self._content_view.next_chapter_requested.connect(self._go_next)
         self._content_view.prev_chapter_requested.connect(self._go_prev)
+        self._content_view.link_requested.connect(self._on_link_requested)
         reader_layout.addWidget(self._content_view, 1)
 
         nav = self._build_nav_bar()
@@ -190,7 +191,7 @@ class ReaderWindow(QMainWindow):
 
         layout.addSpacing(8)
 
-        self._book_title_lbl = QLabel("Lumi Reader")
+        self._book_title_lbl = QLabel("Night Reader")
         self._book_title_lbl.setObjectName("bookTitleLabel")
         layout.addWidget(self._book_title_lbl)
 
@@ -307,7 +308,7 @@ class ReaderWindow(QMainWindow):
         self._welcome_widget.setText(
             "<div style='text-align:center; color:#4a4460;'>"
             "<div style='font-size:52px; margin-bottom:18px;'>📚</div>"
-            "<div style='font-size:20px; font-weight:500; color:#6e6488; margin-bottom:8px;'>Lumi Reader</div>"
+            "<div style='font-size:20px; font-weight:500; color:#6e6488; margin-bottom:8px;'>Night Reader</div>"
             "<div style='font-size:13px; color:#3e3858;'>File → Open EPUB  or  drag &amp; drop</div>"
             "</div>"
         )
@@ -347,7 +348,7 @@ class ReaderWindow(QMainWindow):
         # Update title bar
         self._book_title_lbl.setText(parser.title)
         self._author_lbl.setText(parser.author)
-        self.setWindowTitle(f"{parser.title} — Lumi Reader")
+        self.setWindowTitle(f"{parser.title} — Night Reader")
 
         # Load TOC
         self._toc_panel.load_toc(parser.toc_entries)
@@ -401,6 +402,24 @@ class ReaderWindow(QMainWindow):
     def _go_prev(self):
         if self._parser and self._current_chapter > 0:
             self._load_chapter(self._current_chapter - 1)
+
+    @pyqtSlot(str)
+    def _on_link_requested(self, href: str):
+        if not self._parser:
+            return
+
+        if href.startswith("#"):
+            self._content_view.scrollToAnchor(href[1:])
+            return
+
+        spine_idx, frag = self._parser._href_to_spine(href)
+        if spine_idx is not None and spine_idx != -1:
+            if spine_idx != self._current_chapter:
+                self._load_chapter(spine_idx)
+            if frag:
+                self._content_view.scrollToAnchor(frag)
+        elif spine_idx == -1 and frag:
+            self._content_view.scrollToAnchor(frag)
 
     @pyqtSlot(int)
     def _on_toc_selected(self, spine_index: int):
